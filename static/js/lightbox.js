@@ -18,6 +18,7 @@ function render_lightbox_list_images(preview_source) {
             }).css({ backgroundImage: "url(" + src + ")"});
 
             $image_list.append(node);
+            exports.parse_image_data(img);
         }, "");
     }
 }
@@ -89,13 +90,8 @@ exports.open = function (image, options) {
 
     const $image = $(image);
 
-    // if the asset_map already contains the metadata required to display the
-    // asset, just recall that metadata.
     const $preview_src = $image.attr("src");
     let payload = asset_map.get($preview_src);
-    if (payload === undefined) {
-        payload = exports.parse_image_data($image)
-    }
 
     if (payload.type.match("-video")) {
         display_video(payload);
@@ -167,7 +163,15 @@ exports.show_from_selected_message = function () {
 };
 
 // retrieve the metadata from the DOM and store into the asset_map.
-exports.parse_image_data = function ($image) {
+exports.parse_image_data = function (image) {
+    const $image = $(image);
+    const $preview_src = $image.attr('src');
+
+    if (asset_map.has($preview_src)) {
+        // check if image's data is already present in asset_map.
+        return;
+    }
+
     // if wrapped in the .youtube-video class, it will be length = 1, and therefore
     // cast to true.
     const is_youtube_video = !!$image.closest(".youtube-video").length;
@@ -178,7 +182,6 @@ exports.parse_image_data = function ($image) {
     const is_compose_preview_image = $image.closest("#preview_content").length === 1;
 
     const $parent = $image.parent();
-    const $preview_src = $image.attr("src");
     let $type;
     let $source;
     const $url = $parent.attr("href");
@@ -223,7 +226,6 @@ exports.parse_image_data = function ($image) {
     };
 
     asset_map.set($preview_src, payload);
-    return payload;
 };
 
 exports.prev = function () {
@@ -242,6 +244,7 @@ exports.initialize = function () {
         // prevent the message compose dialog from happening.
         e.stopPropagation();
         const $img = $(this).find("img");
+        exports.parse_image_data($img);
         exports.open($img);
     });
 

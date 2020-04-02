@@ -39,6 +39,7 @@ run_test('pan_and_zoom', () => {
     // Used by render_lightbox_list_images
     $.stub_selector('.focused_table .message_inline_image img', []);
 
+    lightbox.parse_image_data(img);
     lightbox.open(img);
     assert.equal(blueslip.get_test_logs('error').length, 0);
 
@@ -73,6 +74,7 @@ run_test('youtube', () => {
     // Used by render_lightbox_list_images
     $.stub_selector('.focused_table .message_inline_image img', []);
 
+    lightbox.parse_image_data(img);
     lightbox.open(img);
     assert.equal($('.image-actions .open').attr('href'), href);
     assert.equal(blueslip.get_test_logs('error').length, 0);
