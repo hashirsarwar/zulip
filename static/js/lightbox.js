@@ -80,15 +80,13 @@ function display_video(payload) {
 // the image param is optional, but required on the first preview of an image.
 // this will likely be passed in every time but just ignored if the result is already
 // stored in the `asset_map`.
-exports.open = function (image, options) {
+exports.open = function ($image, options) {
     if (!options) {
         options = {
             // default to showing standard images.
             lightbox_canvas: $(".lightbox-canvas-trigger").hasClass("enabled"),
         };
     }
-
-    const $image = $(image);
 
     const $preview_src = $image.attr("src");
     let payload = asset_map.get($preview_src);
